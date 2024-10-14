@@ -36,7 +36,6 @@ class ktgcnCell(RNNCell):
     def __call__(self, inputs, state, scope=None):
 
         with tf.variable_scope(scope or "ktgcn"):
-            print(tf.get_variable_scope().name)
             with tf.variable_scope("gates"):
                 value = tf.nn.sigmoid(
                     self._gc(inputs, state, 2 * self._units, bias=1.0, scope=scope))

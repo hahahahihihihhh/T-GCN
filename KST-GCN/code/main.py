@@ -23,7 +23,7 @@ time_start = time.time()
 flags = tf.app.flags
 FLAGS = flags.FLAGS
 flags.DEFINE_float('learning_rate', 0.001, 'Initial learning rate.')
-flags.DEFINE_integer('training_epoch', 3000, 'Number of epochs to train.')
+flags.DEFINE_integer('training_epoch', 25, 'Number of epochs to train.')
 flags.DEFINE_integer('gru_units', 64, 'hidden units of gru.')
 flags.DEFINE_integer('seq_len',10 , 'time length of inputs.')
 flags.DEFINE_integer('pre_len', 1, 'time length of prediction.')
@@ -54,7 +54,7 @@ if data_name == 'sz':
 
 
 def MaxMinNormalization(x,Max,Min):
-    x = (x-Min)/(Max-Min);
+    x = (x-Min)/(Max-Min)
     return x
 PG = 1
 if noise_name == 'Gauss':
@@ -82,8 +82,8 @@ else:
     name = 'ktgcn'
     
 trainX, trainY, testX, testY = preprocess_data(data1, time_len, train_rate, seq_len, pre_len,methods,attribute)
-print(trainX.shape, trainY.shape)
-print(testX.shape, testY.shape)
+print('X_train_shape: {}, Y_train_shape: {}'.format(trainX.shape, trainY.shape))
+print('X_test_shape: {}, Y_test_shape: {}'.format(testX.shape, testY.shape))
 totalbatch = int(trainX.shape[0]/batch_size)
 training_data_count = len(trainX)
 
@@ -93,10 +93,9 @@ def KTGCN(_X, _weights, _biases):
     cell = tf.nn.rnn_cell.MultiRNNCell([cell_1], state_is_tuple=True)   # 多层RNN
     _X = tf.unstack(_X, axis=1)
     outputs, states = tf.nn.static_rnn(cell, _X, dtype=tf.float32)
-    print(outputs, states, len(outputs), len(states))
-    exit(0)
     print('outputs_shape:',outputs)
     print('states_shape:',states)
+    # outputs[-1] == states[0]
     m = []
     for i in outputs:
         o = tf.reshape(i,shape=[-1,num_nodes,gru_units])
@@ -125,7 +124,7 @@ biases = {
 
 if model_name == 'ktgcn':
     pred,ttts,ttto = KTGCN(inputs, weights, biases)
-exit(0)
+
 y_pred = pred
       
 
@@ -209,6 +208,7 @@ print(time_end-time_start,'s')
 ############## visualization ###############
 #x = [i for i in range(training_epoch)]
 b = int(len(batch_rmse)/totalbatch)
+assert b == training_epoch
 batch_rmse1 = [i for i in batch_rmse]
 train_rmse = [(sum(batch_rmse1[i*totalbatch:(i+1)*totalbatch])/totalbatch) for i in range(b)]
 batch_loss1 = [i for i in batch_loss]
@@ -219,17 +219,18 @@ index = test_rmse.index(np.min(test_rmse))
 test_result = test_pred[index]
 var = pd.DataFrame(test_result)
 var.to_csv(path+'/test_result.csv',index = False,header = False)
-plot_result(test_result,test_label1,path)
-plot_error(train_rmse,train_loss,test_rmse,test_acc,test_mae,path)
+# plot_result(test_result,test_label1,path)
+# plot_error(train_rmse,train_loss,test_rmse,test_acc,test_mae,path)
 evalution = []
-evalution.append(np.min(test_rmse))
+assert np.min(test_rmse) == test_rmse[index]
+evalution.append(test_rmse[index])
 evalution.append(test_mae[index])
 evalution.append(test_acc[index])
 evalution.append(test_r2[index])
 evalution.append(test_var[index])
-evalution = pd.DataFrame(evalution)
+evalution = pd.DataFrame(np.array(evalution).reshape(1, 5), columns = ['rmse', 'mae', 'accuracy', 'r2', 'var'])
 evalution.to_csv(path+'/evalution.csv',index=False,header=None)
-print('min_rmse:%r'%(np.min(test_rmse)),
+print('min_rmse:%r'%(test_rmse[index]),
       'min_mae:%r'%(test_mae[index]),
       'max_acc:%r'%(test_acc[index]),
       'r2:%r'%(test_r2[index]),

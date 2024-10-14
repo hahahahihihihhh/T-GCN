@@ -46,16 +46,8 @@ The manuscript can be visited at https://ieeexplore.ieee.org/document/9681326/ o
 <img src="./fig/KS-Cell.jpg" width="400px" hight="400px" />
 
 ## Requirements
-* pickle 
-* tensorflow
-* pandas
-* numpy
-* math
-* os
-* sklearn
-* matplotlib
-* time
-* scipy
+python=3.7
+requirement.txt
 
 ## Training
 python main.py --methods ktgcn
