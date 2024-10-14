@@ -36,11 +36,13 @@ class ktgcnCell(RNNCell):
     def __call__(self, inputs, state, scope=None):
 
         with tf.variable_scope(scope or "ktgcn"):
-            with tf.variable_scope("gates"):  
+            print(tf.get_variable_scope().name)
+            with tf.variable_scope("gates"):
                 value = tf.nn.sigmoid(
                     self._gc(inputs, state, 2 * self._units, bias=1.0, scope=scope))
                 r, u = tf.split(value=value, num_or_size_splits=2, axis=1)
             with tf.variable_scope("candidate"):
+
                 r_state = r * state
                 c = self._act(self._gc(inputs, r_state, self._units, scope=scope))
             new_h = u * state + (1 - u) * c
@@ -48,7 +50,7 @@ class ktgcnCell(RNNCell):
 
 
     def _gc(self, inputs, state, output_size, bias=0.0, scope=None):
-        kgembedding = pd.read_csv('data/sz_kg_embedding.csv',header = None)
+        kgembedding = pd.read_csv('sz_data/sz_kg_embedding.csv',header = None)
         kgembedding_max = np.max(np.max(kgembedding))
         kgembedding_nor = abs(kgembedding/kgembedding_max)
         

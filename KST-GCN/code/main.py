@@ -82,16 +82,19 @@ else:
     name = 'ktgcn'
     
 trainX, trainY, testX, testY = preprocess_data(data1, time_len, train_rate, seq_len, pre_len,methods,attribute)
-
+print(trainX.shape, trainY.shape)
+print(testX.shape, testY.shape)
 totalbatch = int(trainX.shape[0]/batch_size)
 training_data_count = len(trainX)
 
 def KTGCN(_X, _weights, _biases):
     ###
     cell_1 = ktgcnCell(gru_units, adj, num_nodes=num_nodes, dim = dim,time_len=time_len)
-    cell = tf.nn.rnn_cell.MultiRNNCell([cell_1], state_is_tuple=True)
+    cell = tf.nn.rnn_cell.MultiRNNCell([cell_1], state_is_tuple=True)   # 多层RNN
     _X = tf.unstack(_X, axis=1)
     outputs, states = tf.nn.static_rnn(cell, _X, dtype=tf.float32)
+    print(outputs, states, len(outputs), len(states))
+    exit(0)
     print('outputs_shape:',outputs)
     print('states_shape:',states)
     m = []
@@ -105,7 +108,7 @@ def KTGCN(_X, _weights, _biases):
     output = tf.transpose(output, perm=[0,2,1])
     output = tf.reshape(output, shape=[-1,num_nodes])
     return output, m, states
-    
+
     
 ###### placeholders ######
 if methods == 'add kg':
@@ -122,7 +125,7 @@ biases = {
 
 if model_name == 'ktgcn':
     pred,ttts,ttto = KTGCN(inputs, weights, biases)
-
+exit(0)
 y_pred = pred
       
 
