@@ -12,7 +12,7 @@ start_time = datetime.strptime("2015/1/1_0:00", "%Y/%m/%d_%H:%M")
 end_time = datetime.strptime("2015/1/31_23:45", "%Y/%m/%d_%H:%M")
 kg_path = "../time_slot_kg/"
 delta = timedelta(minutes=15)
-time_slot_kg = dict()
+time_slot_kg = dict()       # 按照时间片划分知识图谱
 
 
 def mkdir(path):
