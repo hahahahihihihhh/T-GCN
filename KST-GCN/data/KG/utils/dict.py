@@ -9,7 +9,7 @@ poi_type2en = {
     "其他信息": "others",
     "交通设施服务": "transport_infrastructure"
 }
-ent_word2descr = {
+word2descr = {
     "accommodation": "A place for temporary lodging.",
     "company": "A company, abbreviated as co., is a legal entity representing an association of legal people, whether natural, juridical or a mixture of both, with a specific objective. Company members share a common purpose and unite to achieve specific, declared goals.",
     "medical_service": "Health care, or healthcare, is the improvement of health via the prevention, diagnosis, treatment, amelioration or cure of disease, illness, injury, and other physical and mental impairments in people. Health care is delivered by health professionals and allied health fields. Medicine, dentistry, pharmacy, midwifery, nursing, optometry, audiology, psychology, occupational therapy, physical therapy, athletic training, and other health professions all constitute health care. The term includes work done in providing primary care, secondary care, tertiary care, and public health.",
@@ -39,6 +39,3 @@ ent_word2descr = {
     "mostly_cloudy": "Mostly cloudy.",
     "broken_clouds": "Broken clouds.",
 }   # max-len: 119
-rel_word2descr = {
-
-}

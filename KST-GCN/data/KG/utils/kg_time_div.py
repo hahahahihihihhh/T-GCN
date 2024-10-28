@@ -1,7 +1,7 @@
 import os.path
 import random
 from collections import defaultdict
-from dict import poi_type2en, ent_word2descr
+from dict import poi_type2en, word2descr
 import pandas as pd
 from datetime import datetime, timedelta
 
@@ -22,15 +22,18 @@ def mkdir(path):
 def save_entity2text(entities, path):
     with open(path, "w") as file:
         for _ent in entities:
-            if _ent in ent_word2descr.keys():
-                file.writelines(_ent + '\t' + ent_word2descr[_ent] + '\n')
+            if _ent in word2descr.keys():
+                file.writelines(_ent + '\t' + word2descr[_ent] + '\n')
             else:
                 file.writelines(_ent + '\t' + _ent.replace('_', ' ') + '\n')
 
 def save_relation2text(relations, path):
     with open(path, "w") as file:
         for _rel in relations:
-            file.writelines(_rel + '\t' + _rel.replace('_', ' ') + '\n')
+            if _rel in word2descr.keys():
+                file.writelines(_rel + '\t' + word2descr[_rel] + '\n')
+            else:
+                file.writelines(_rel + '\t' + _rel.replace('_', ' ') + '\n')
 
 def time_slot_div():
     current_time = start_time
@@ -65,25 +68,29 @@ def time_slot_div():
     print(len(ind))
     return time_slot_kg, entities_set, relations_set
 
-def save_tsv(triplets, path):
+def save_tsv(triplets, path, ent, rel):
     with open(path, "w") as file:
         for _triple in triplets:
             file.writelines('\t'.join(_triple) + '\n')
+    with open(path[:-3] + 'txt', 'w') as file:
+        for _triple in triplets:
+            _h, _r, _t = ent.index(_triple[0]), rel.index(_triple[1]), ent.index(_triple[2])
+            file.writelines('\t'.join((str(_h), str(_r), str(_t))) + '\n')
 cnt = 0
 # 存储对应时间片的知识图谱、实体集、关系集
 def kg_store(kg, entities, relations, time):
     kg = kg[time]
-    entities = entities[time]
-    relations = relations[time]
+    entities = list(sorted(entities[time]))
+    relations = list(sorted(relations[time]))
     random.seed(7092)
     random.shuffle(kg)
     train_len = int(len(kg) * 0.8)
     time_slot_path = os.path.join(kg_path, time.replace('/', '_').replace(':', '_'))
     mkdir(time_slot_path)
-    save_tsv(kg[:train_len], os.path.join(time_slot_path, "train.tsv")) # 保存训练集
-    save_tsv(kg[train_len:], os.path.join(time_slot_path, "dev.tsv")) # 保存测试集
-    save_entity2text(sorted(list(entities)), os.path.join(time_slot_path, "entity2text.txt"))   # 保存实体集
-    save_relation2text(sorted(list(relations)), os.path.join(time_slot_path, "relation2text.txt"))  # 保存关系集
+    save_tsv(kg[:train_len], os.path.join(time_slot_path, "train.tsv"), entities, relations) # 保存训练集
+    save_tsv(kg[train_len:], os.path.join(time_slot_path, "dev.tsv"), entities, relations) # 保存测试集
+    save_entity2text(entities, os.path.join(time_slot_path, "entity2text.txt"))   # 保存实体集
+    save_relation2text(relations, os.path.join(time_slot_path, "relation2text.txt"))  # 保存关系集
     global cnt
     cnt += 1
     if (cnt == 2):
