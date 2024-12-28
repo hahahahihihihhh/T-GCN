@@ -28,11 +28,11 @@ flags.DEFINE_integer('pre_len', 3, 'time length of prediction.')
 flags.DEFINE_float('train_rate', 0.8, 'rate of training set.')
 flags.DEFINE_integer('batch_size', 64, 'batch size.')
 flags.DEFINE_string('dataset', 'sz', 'dataset')
-flags.DEFINE_string('model_name', 'tgcn', 'ast-gcn')
-flags.DEFINE_string('scheme', 1, 'scheme')
+flags.DEFINE_string('model_name', 'ast-gcn', 'ast-gcn')
+flags.DEFINE_integer('scheme', 2, 'scheme')
+flags.DEFINE_integer('dim', 20, 'dim')
 flags.DEFINE_string('noise_name', 'None', 'None or Gauss or Possion')
-flags.DEFINE_string('noise_param', 0, 'Parameter for noise')
-
+flags.DEFINE_integer('noise_param', 0, 'Parameter for noise')
 model_name = FLAGS.model_name
 noise_name = FLAGS.noise_name
 data_name = FLAGS.dataset
@@ -94,7 +94,7 @@ print('noise_name:', noise_name)
 print('noise_param:', PG)
 
 trainX, trainY, testX, testY = preprocess_data(data1, time_len, train_rate, seq_len, pre_len, model_name, scheme)
-
+exit(0)
 totalbatch = int(trainX.shape[0]/batch_size)
 training_data_count = len(trainX)
 
