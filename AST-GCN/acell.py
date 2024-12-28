@@ -15,9 +15,9 @@ dim = 20
 
 
 def load_assist_data(dataset):
-    sz_adj = pd.read_csv('%s_adj.csv'%dataset, header=None)
+    sz_adj = pd.read_csv('./data/%s_adj.csv'%dataset, header=None)
     adj = np.mat(sz_adj)
-    data = pd.read_csv('sz_speed.csv')
+    data = pd.read_csv('./data/%s_speed.csv'%dataset)
     return data, adj
 
 data, adj = load_assist_data('sz')
@@ -39,20 +39,20 @@ def preprocess_data(data1,  time_len, train_rate, seq_len, pre_len, model_name,s
             b1 = test_data[i: i + seq_len + pre_len]
             testX.append(b1[0 : seq_len])
             testY.append(b1[seq_len : seq_len + pre_len])         
-            
+
     else:################AST-GCN###########################
-        sz_poi = pd.read_csv('sz_poi.csv',header = None)
+        sz_poi = pd.read_csv('./data/sz_poi.csv',header = None)
         sz_poi = np.transpose(sz_poi)
         sz_poi_max = np.max(np.max(sz_poi))
         sz_poi_nor = sz_poi/sz_poi_max
-        sz_weather = pd.read_csv('sz_weather.csv',header = None)
+        sz_weather = pd.read_csv('./data/sz_weather.csv',header = None)
         sz_weather = np.mat(sz_weather)
         sz_weather_max = np.max(np.max(sz_weather))
         sz_weather_nor = sz_weather/sz_weather_max
         sz_weather_nor_train = sz_weather_nor[0:train_size]
         sz_weather_nor_test = sz_weather_nor[train_size:time_len]
 
-        if J == 1:#add poi(dim+1)
+        if scheme == 1:#add poi(dim+1)
             trainX, trainY, testX, testY = [], [], [], []
             for i in range(len(train_data) - seq_len - pre_len):
                 a1 = train_data[i: i + seq_len + pre_len]
@@ -64,7 +64,7 @@ def preprocess_data(data1,  time_len, train_rate, seq_len, pre_len, model_name,s
                 b = np.row_stack((b1[0:seq_len],sz_poi_nor[:1]))
                 testX.append(b)
                 testY.append(b1[seq_len : seq_len + pre_len])
-        if J == 2:#add weather(dim+11)
+        if scheme == 2:#add weather(dim+11)
             trainX, trainY, testX, testY = [], [], [], []
             for i in range(len(train_data) - seq_len - pre_len):
                 a1 = train_data[i: i + seq_len + pre_len]

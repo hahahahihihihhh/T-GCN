@@ -6,8 +6,7 @@ Created on Sat Oct 27 22:09:29 2018
 @author: dhh
 """
 
-import numpy as np
-from sklearn.cross_validation import train_test_split
+from sklearn.model_selection import train_test_split
 import pandas as pd
 
 
@@ -15,7 +14,7 @@ import pandas as pd
 
  #首先，读取.CSV文件成矩阵的形式。
 #my_matrix = np.loadtxt(open("shanghai_KG.txt"),delimiter=",",skiprows=0)
-my_matrix=pd.read_csv(r'E:\csu\KG\TGCN\sz\sz_kg\sz_assist_kg.csv',names=['head','relation','tail'],encoding='GBK')
+my_matrix=pd.read_csv(r'./sz_assist_kg.csv',names=['head','relation','tail'],encoding='GBK')
 cols=list(my_matrix)
 #print(cols)
 cols.insert(1,cols.pop(cols.index('tail')))
