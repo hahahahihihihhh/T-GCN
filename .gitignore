@@ -4,3 +4,4 @@
 /.gitattributes
 /KST-GCN/data/KG/time_slot_kg/
 *.pyc
+/AST-GCN/out/

@@ -35,7 +35,7 @@ class tgcnCell(RNNCell):
     def __call__(self, inputs, state, scope=None):
 
         with tf.variable_scope(scope or "tgcn"):
-            with tf.variable_scope("gates"):  
+            with tf.variable_scope("gates"):
                 value = tf.nn.sigmoid(
                     self._gc(inputs, state, 2 * self._units, bias=1.0, scope=scope))
                 r, u = tf.split(value=value, num_or_size_splits=2, axis=1)
@@ -74,22 +74,21 @@ class tgcnCell(RNNCell):
 #        kg_x = tf.concat([inputs, kgMatrix],axis = 2)
 #        print('kg_x_shape:',kg_x.shape)
 #        x_s = tf.concat([kg_x, state], axis=2)
-        input_size = x_s.get_shape()[2].value
+        input_size = x_s.get_shape()[2].value       # gru_units + 1
         ## (num_node,input_size,-1)
-        x0 = tf.transpose(x_s, perm=[1, 2, 0])  
-        x0 = tf.reshape(x0, shape=[self._nodes, -1])
-        
+        x0 = tf.transpose(x_s, perm=[1, 2, 0])  # (num_node, gru_units + 1, batch)
+        x0 = tf.reshape(x0, shape=[self._nodes, -1])    # (num_node, batch * (gru_units + 1))
         scope = tf.get_variable_scope()
         with tf.variable_scope(scope):
             for m in self._adj:
                 x1 = tf.sparse_tensor_dense_matmul(m, x0)
 #                print(x1)
-            x = tf.reshape(x1, shape=[self._nodes, input_size,-1])
-            x = tf.transpose(x,perm=[2,0,1])
-            x = tf.reshape(x, shape=[-1, input_size])
+            x = tf.reshape(x1, shape=[self._nodes, input_size,-1])  # (num_node, gru_units + 1, batch)
+            x = tf.transpose(x,perm=[2,0,1])    # (batch, num_node, gru_units + 1)
+            x = tf.reshape(x, shape=[-1, input_size])   # (batch * num_node, gru_units + 1)
             weights = tf.get_variable(
                 'weights', [input_size, output_size], initializer=tf.contrib.layers.xavier_initializer())
-            x = tf.matmul(x, weights)  # (batch_size * self._nodes, output_size)
+            x = tf.matmul(x, weights)  # (batch_size * num_node, output_size)
             biases = tf.get_variable(
                 "biases", [output_size], initializer=tf.constant_initializer(bias, dtype=tf.float32))
             x = tf.nn.bias_add(x, biases)

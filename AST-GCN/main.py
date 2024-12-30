@@ -22,14 +22,14 @@ flags = tf.app.flags
 FLAGS = flags.FLAGS
 flags.DEFINE_float('learning_rate', 0.001, 'Initial learning rate.')
 flags.DEFINE_integer('training_epoch', 3000, 'Number of epochs to train.')
-flags.DEFINE_integer('gru_units', 128, 'hidden units of gru.')
+flags.DEFINE_integer('gru_units', 100, 'hidden units of gru.')
 flags.DEFINE_integer('seq_len',10 , 'time length of inputs.')
 flags.DEFINE_integer('pre_len', 3, 'time length of prediction.')
 flags.DEFINE_float('train_rate', 0.8, 'rate of training set.')
 flags.DEFINE_integer('batch_size', 64, 'batch size.')
 flags.DEFINE_string('dataset', 'sz', 'dataset')
 flags.DEFINE_string('model_name', 'ast-gcn', 'ast-gcn')
-flags.DEFINE_integer('scheme', 2, 'scheme')
+flags.DEFINE_integer('scheme', 3, 'scheme')
 flags.DEFINE_integer('dim', 20, 'dim')
 flags.DEFINE_string('noise_name', 'None', 'None or Gauss or Possion')
 flags.DEFINE_integer('noise_param', 0, 'Parameter for noise')
@@ -94,7 +94,6 @@ print('noise_name:', noise_name)
 print('noise_param:', PG)
 
 trainX, trainY, testX, testY = preprocess_data(data1, time_len, train_rate, seq_len, pre_len, model_name, scheme)
-exit(0)
 totalbatch = int(trainX.shape[0]/batch_size)
 training_data_count = len(trainX)
 
@@ -112,7 +111,7 @@ def TGCN(_X, _weights, _biases):
     last_output = m[-1]
     output = tf.matmul(last_output, _weights['out']) + _biases['out']
     output = tf.reshape(output,shape=[-1,num_nodes,pre_len])
-    output = tf.transpose(output, perm=[0,2,1])
+    output = tf.transpose(output, perm=[0,2,1]) # (batch_size, pre_len, num_nodes)
     output = tf.reshape(output, shape=[-1,num_nodes])
     return output, m, states
     
