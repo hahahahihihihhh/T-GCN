@@ -24,9 +24,9 @@ flags = tf.app.flags
 FLAGS = flags.FLAGS
 flags.DEFINE_float('learning_rate', 0.001, 'Initial learning rate.')
 flags.DEFINE_integer('training_epoch', 25, 'Number of epochs to train.')
-flags.DEFINE_integer('gru_units', 64, 'hidden units of gru.')
-flags.DEFINE_integer('seq_len',10 , 'time length of inputs.')
-flags.DEFINE_integer('pre_len', 1, 'time length of prediction.')
+flags.DEFINE_integer('gru_units', 128, 'hidden units of gru.')
+flags.DEFINE_integer('seq_len',12 , 'time length of inputs.')
+flags.DEFINE_integer('pre_len', 12, 'time length of prediction.')
 flags.DEFINE_float('train_rate', 0.8, 'rate of training set.')
 flags.DEFINE_integer('batch_size', 64, 'batch size.')
 flags.DEFINE_string('dataset', 'sz', 'sz or los.')
@@ -80,7 +80,7 @@ if methods == 'add kg':
     name = 'add kg dim'
 else:
     name = 'ktgcn'
-    
+
 trainX, trainY, testX, testY = preprocess_data(data1, time_len, train_rate, seq_len, pre_len,methods,attribute)
 print('X_train_shape: {}, Y_train_shape: {}'.format(trainX.shape, trainY.shape))
 print('X_test_shape: {}, Y_test_shape: {}'.format(testX.shape, testY.shape))
